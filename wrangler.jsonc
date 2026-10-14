@@ -24,13 +24,13 @@
     // the per-country wallet floor the float check alerts below (XOF)
     "FLOAT_FLOOR_XOF": "2000000",
     // PI-SPI (BCEAO instant payments). Off unless PISPI_ENABLED is "true" and PI_SPI_ACCOUNT_ALIAS (secret) is set.
-    "PISPI_ENABLED": "false",
-    "PISPI_POLL": "false",
+    "PISPI_ENABLED": "true",
+    "PISPI_POLL": "true",
     "PISPI_RTP": "false",
     "PISPI_COUNTRY": "BF",
-    "PI_SPI_PARTICIPANT": "",
-    "PI_SPI_BUSINESS_API_URL": "",
-    "PI_SP_API_OAUTH_URL": ""
+    "PI_SPI_PARTICIPANT": "BFC999",
+    "PI_SPI_BUSINESS_API_URL": "https://no-mtls.piz.simulateurs.pi-bceao.com",
+    "PI_SP_API_OAUTH_URL": "https://piz-simulateur-business-sandbox.auth.eu-west-1.amazoncognito.com/oauth2/token"
   },
   "d1_databases": [
     { "binding": "DB", "database_name": "paygate", "database_id": "122de81e-aef6-484a-a6d2-17ca34d5ce78", "migrations_dir": "migrations" }
