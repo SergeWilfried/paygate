@@ -5,6 +5,8 @@
   "compatibility_flags": ["nodejs_compat"],
   "main": "./src/index.ts",
   "observability": { "enabled": true },
+  // The operator console (public/). The Worker runs first for the API and callback paths; everything else is a static file.
+  "assets": { "directory": "./public", "run_worker_first": ["/v1/*", "/admin/*", "/callbacks/*", "/health"] },
   "triggers": {
     // every minute: deliver webhooks, settle payments whose callback was missed. Every fifth minute also checks the float.
     "crons": ["* * * * *"]

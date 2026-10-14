@@ -26,6 +26,10 @@ It was extracted from Relay (`~/Downloads/design_handoff_relay_pwa/relay`), wher
 - **Tenants cannot see each other.** Every query is scoped by the tenant of the key; provider ids include the tenant.
 - **Fail closed.** The sandbox is refused with `LIVE=true`; pawaPay production is refused without it; an unsigned callback is refused with `LIVE=true`; an unknown provider mode stops everything.
 
+## Operator console
+
+Open the Worker's root URL (`npm run dev` → http://localhost:8787) and sign in with `ADMIN_API_KEY`. The key is kept in that tab's `sessionStorage` only. From there: float per country, payments needing a person (unknown outcomes, manual resolve with a required note), payment history, tenants (create, edit, suspend, API keys shown once, webhook secret reveal/rotate), undeliverable webhooks (retry), and the raw provider callbacks. It is plain JS with a strict CSP (`public/_headers`), no build step. Put the Worker behind Cloudflare Access if the URL is public.
+
 ## Using it
 
 See [docs/api.md](docs/api.md) for the API, [docs/operations.md](docs/operations.md) for running it, and [docs/relay-migration.md](docs/relay-migration.md) for moving Relay onto it.
@@ -51,11 +55,11 @@ npm run check                         # tsc
 | `src/callbacks.ts` | Provider callbacks in |
 | `src/reconcile.ts`, `float.ts` | Settling what callbacks missed; wallet monitoring |
 | `src/tenants.ts`, `admin.ts` | Tenants, API keys, webhook secrets, the operator API |
+| `public/` | The operator console (static files: `index.html`, `console.js`, `console.css`), served at `/` by the Worker's assets; it only calls `/admin/*` |
 | `migrations/` | D1 schema |
 
 ## Not done yet
 
-- No operator UI (the admin API is JSON only).
 - No per-tenant rate limiting; abuse guards are the provider's and the per-tenant `max_amount`.
 - No client SDK; [`src/signing.ts`](src/signing.ts) is written to be copied for webhook verification.
 - Not tested against the live pawaPay or PI-SPI sandboxes: the adapters are ported from Relay's code, which was, and are tested here against stubs that answer as those providers do. Run `docs/operations.md` → "Before going live" first.

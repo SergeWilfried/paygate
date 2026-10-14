@@ -5,7 +5,8 @@ import { listDead, retryDelivery } from './webhooks.ts';
 import { resolvePayment } from './reconcile.ts';
 import { loadFloat } from './float.ts';
 import type { Providers } from './providers/types.ts';
-import { safeEqual } from './util.ts';
+import { safeEqual, on } from './util.ts';
+import { pispiAlias, pispiEnabled, pispiPollEnabled, pispiRtpEnabled } from './providers/pispi.ts';
 
 /**
  * The operator API (`Authorization: Bearer <ADMIN_API_KEY>`): tenants, their keys and webhook secrets, payments that need a person, undeliverable events.
@@ -26,7 +27,7 @@ const body = async (request: Request): Promise<Record<string, unknown>> => {
 };
 
 /** What the operator sees of a payment: the tenant's view plus the detail a tenant never gets. */
-const adminView = (env: Env, r: PaymentRow) => ({ ...view(env, r), tenant: r.tenant_id, provider: r.provider, providerId: r.provider_id, providerRef: r.provider_ref, failureDetail: r.failure_detail, attempts: r.attempts, version: r.version });
+const adminView = (env: Env, r: PaymentRow) => ({ ...view(env, r), tenant: r.tenant_id, provider: r.provider, country: r.country, providerId: r.provider_id, providerRef: r.provider_ref, failureDetail: r.failure_detail, attempts: r.attempts, version: r.version });
 
 export async function adminApi(env: Env, request: Request, path: string, providers: Providers): Promise<Response | null> {
 	const admin = requireAdmin(env, request);
@@ -79,6 +80,17 @@ export async function adminApi(env: Env, request: Request, path: string, provide
 		return json({ queued: true });
 	}
 	if (path === '/admin/float' && m === 'GET') return json(await loadFloat(env, providers));
+	if (path === '/admin/providers' && m === 'GET') {
+		const since = Date.now() - 86_400_000;
+		const { results } = await env.DB.prepare(`SELECT provider, rail, kind, status, COUNT(*) AS n, SUM(amount) AS amount FROM payments WHERE created_at >= ? GROUP BY provider, rail, kind, status`).bind(since).all();
+		const sandbox = providers.mode === 'sandbox';
+		const list = [
+			{ id: sandbox ? 'sandbox' : 'pawapay', name: sandbox ? 'Sandbox (simulated)' : 'pawaPay', role: 'Mobile money (MNO aggregator)', rails: ['mobile_money'], channels: ['orange', 'wave', 'moov'], countries: ['CIV', 'SEN', 'BFA'], active: true, notes: [sandbox ? 'No money moves' : env.PAWAPAY_BASE_URL, on(env.LIVE) ? 'LIVE' : 'not live'] },
+			{ id: 'pispi', name: 'PI-SPI (BCEAO)', role: 'Instant bank payments', rails: ['pispi_qr', 'pispi_rtp'], channels: ['bank'], countries: [({ BF: 'BFA', CI: 'CIV', SN: 'SEN' } as Record<string, string>)[env.PISPI_COUNTRY || 'BF'] ?? (env.PISPI_COUNTRY || 'BF')], active: pispiEnabled(env),
+				notes: pispiEnabled(env) ? [`QR ${pispiPollEnabled(env) ? 'auto-confirmed (polling)' : 'confirmed by an operator'}`, `payment requests ${pispiRtpEnabled(env) ? 'on' : 'off'}`] : [pispiAlias(env) === null && on(env.PISPI_ENABLED) ? 'PI_SPI_ACCOUNT_ALIAS is not set' : 'disabled'] },
+		];
+		return json({ data: list, last24h: results });
+	}
 	if (path === '/admin/provider-events' && m === 'GET') return json({ data: (await env.DB.prepare(`SELECT id, provider, path, accepted, body, received_at FROM provider_events ORDER BY id DESC LIMIT 100`).all()).results });
 	return null;
 }
