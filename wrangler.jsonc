@@ -31,10 +31,10 @@
     "PI_SP_API_OAUTH_URL": ""
   },
   "d1_databases": [
-    { "binding": "DB", "database_name": "paygate", "database_id": "REPLACE_WITH_D1_ID", "migrations_dir": "migrations" }
+    { "binding": "DB", "database_name": "paygate", "database_id": "122de81e-aef6-484a-a6d2-17ca34d5ce78", "migrations_dir": "migrations" }
   ],
   "kv_namespaces": [
-    { "binding": "CACHE", "id": "REPLACE_WITH_KV_ID" }
+    { "binding": "CACHE", "id": "a65d284118964b7782cc2d58132d4863" }
   ]
   // Secrets (wrangler secret put): ADMIN_API_KEY, WEBHOOK_MASTER_SECRET, PAWAPAY_API_TOKEN,
   // PI_SP_API_CLIENT_ID, PI_SP_API_CLIENT_SECRET, PI_SPI_API_KEY, PI_SPI_ACCOUNT_ALIAS, ALERT_WEBHOOK_URL
