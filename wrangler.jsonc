@@ -1,0 +1,39 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "paygate",
+  "compatibility_date": "2026-10-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "./src/index.ts",
+  "observability": { "enabled": true },
+  "triggers": {
+    // every minute: deliver webhooks, settle payments whose callback was missed. Every fifth minute also checks the float.
+    "crons": ["* * * * *"]
+  },
+  "vars": {
+    "LIVE": "false",
+    // "sandbox" pretends (no money moves, dev only, refused with LIVE=true) or "pawapay" (needs the PAWAPAY_API_TOKEN secret)
+    "PROVIDER_MODE": "sandbox",
+    // pawaPay API base: https://api.sandbox.pawapay.io (no money moves) or https://api.pawapay.io (production: only with LIVE=true)
+    "PAWAPAY_BASE_URL": "https://api.sandbox.pawapay.io",
+    // the largest single payment a tenant may make unless its own max_amount says otherwise (XOF)
+    "DEFAULT_MAX_AMOUNT": "2000000",
+    // the per-country wallet floor the float check alerts below (XOF)
+    "FLOAT_FLOOR_XOF": "2000000",
+    // PI-SPI (BCEAO instant payments). Off unless PISPI_ENABLED is "true" and PI_SPI_ACCOUNT_ALIAS (secret) is set.
+    "PISPI_ENABLED": "false",
+    "PISPI_POLL": "false",
+    "PISPI_RTP": "false",
+    "PISPI_COUNTRY": "BF",
+    "PI_SPI_PARTICIPANT": "",
+    "PI_SPI_BUSINESS_API_URL": "",
+    "PI_SP_API_OAUTH_URL": ""
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "paygate", "database_id": "REPLACE_WITH_D1_ID", "migrations_dir": "migrations" }
+  ],
+  "kv_namespaces": [
+    { "binding": "CACHE", "id": "REPLACE_WITH_KV_ID" }
+  ]
+  // Secrets (wrangler secret put): ADMIN_API_KEY, WEBHOOK_MASTER_SECRET, PAWAPAY_API_TOKEN,
+  // PI_SP_API_CLIENT_ID, PI_SP_API_CLIENT_SECRET, PI_SPI_API_KEY, PI_SPI_ACCOUNT_ALIAS, ALERT_WEBHOOK_URL
+}

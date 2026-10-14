@@ -1,0 +1,8 @@
+ADMIN_API_KEY=change-me-to-a-long-random-string
+WEBHOOK_MASTER_SECRET=change-me-to-another-long-random-string
+PAWAPAY_API_TOKEN=
+PI_SP_API_CLIENT_ID=
+PI_SP_API_CLIENT_SECRET=
+PI_SPI_API_KEY=
+PI_SPI_ACCOUNT_ALIAS=
+ALERT_WEBHOOK_URL=
