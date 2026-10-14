@@ -2,7 +2,7 @@
 
 One payment gateway for every product in the portfolio. Products ask it to **collect** money from a customer or **pay out** to one; it talks to the providers (pawaPay mobile money for Côte d'Ivoire, Senegal and Burkina Faso, PI-SPI instant bank payments), keeps the ledger, and tells the product what happened with a signed webhook.
 
-It was extracted from [Relay](../relay), where this code first ran inside the app. What moved here: the provider adapters, idempotency, signature checks, reconciliation, float monitoring. What stayed there: pricing, limits, compliance rules, approvals, refunds, and everything about crypto.
+It was extracted from Relay (`~/Downloads/design_handoff_relay_pwa/relay`), where this code first ran inside the app. What moved here: the provider adapters, idempotency, signature checks, reconciliation, float monitoring. What stayed there: pricing, limits, compliance rules, approvals, refunds, and everything about crypto.
 
 ```
  product A ─┐                        ┌─ pawaPay  (deposits, payouts, wallets, signed callbacks)
