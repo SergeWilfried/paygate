@@ -19,6 +19,8 @@
     "PAWAPAY_BASE_URL": "https://api.sandbox.pawapay.io",
     // the largest single payment a tenant may make unless its own max_amount says otherwise (XOF)
     "DEFAULT_MAX_AMOUNT": "2000000",
+    "CLERK_PUBLISHABLE_KEY": "pk_test_bGFzdGluZy1rcmlsbC0yMTIxLmNsZXJrLmFjY291bnRzLmRldiQ",
+    "CLERK_OPERATOR_IDS": "user_3Kgna1fcv224zMXn81k6qWJNK02",
     // the per-country wallet floor the float check alerts below (XOF)
     "FLOAT_FLOOR_XOF": "2000000",
     // PI-SPI (BCEAO instant payments). Off unless PISPI_ENABLED is "true" and PI_SPI_ACCOUNT_ALIAS (secret) is set.
